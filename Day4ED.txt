@@ -1,0 +1,375 @@
+config t
+int fa 0/0
+ ip add 10.12.100.9 255.255.255.0 Secondary
+service finger
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+ip http server
+ip http secure-server
+!Make Ping EASY
+ip host pc 10.12.1.10
+ip host cm 10.12.100.8
+ip host cm2 10.12.100.9
+ip host p1 10.12.100.102
+ip host p2 10.12.100.103
+ip host c1 10.12.50.6
+ip host c2 10.12.50.8
+ip host sw 10.12.1.4
+ip host ed 10.12.12.1
+
+ex1: the 3 classmates
+@edge:
+config t
+no access-list 1
+access-list 1 deny 10.22.0.0 0.0.255.255
+access-list 1 deny 10.32.0.0 0.0.255.255
+access-list 1 deny 10.42.0.0 0.0.255.255
+access-list 1 perm any
+int gi 0/0/1
+ip access-group 1 in
+do sh ip access-list 1
+
+ex2: unlock
+config t
+int gi 0/0/1
+no ip access-group 1 in
+do sh ip access-list 1
+
+
+ex3: no friends
+config t
+no access-list 2
+access-list 2 deny 10.21.0.0 0.0.255.255
+access-list 2 deny 10.32.0.0 0.0.255.255
+access-list 2 deny 10.42.0.0 0.0.255.255
+access-list 2 perm any
+int gi 0/0/1
+ip access-group 2 in
+do sh ip access-list 2
+
+ex2: unlock
+config t
+int gi 0/0/1
+no ip access-group 2 in
+do sh ip access-list 2
+
+
+ex3: no friends
+config t
+no access-list 3
+access-list 3 deny 10.21.0.0 0.0.255.255
+access-list 3 deny 10.22.0.0 0.0.255.255
+access-list 3 deny 10.32.0.0 0.0.255.255
+access-list 3 deny 10.42.0.0 0.0.255.255
+access-list 3 perm any
+int gi 0/0/1
+ip access-group 3 in
+do sh ip access-list 3
+
+option to no friends
+
+config t
+no access-list 4
+access-list 4 permit 10.11.0.0 0.0.255.255
+!access-list 4 deny any
+int gi 0/0/1
+ip access-group 4 in
+do sh ip access-list 4
+
+ex2: unlock
+config t
+int gi 0/0/1
+no ip access-group 4 in
+do sh ip access-list 4
+
+config t
+no access-list 5
+access-list 5 permit 10.42.0.0 0.0.255.255
+!access-list 4 deny any
+int gi 0/0/1
+ip access-group 5 in
+do sh ip access-list 5
+
+ex2: unlock
+config t
+int gi 0/0/1
+no ip access-group 5 in
+do sh ip access-list 5
+
+@CUCM
+config t
+int fa 0/0
+ ip add 10.12.100.9 255.255.255.0 Secondary
+service finger
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+ip http server
+ip http secure-server
+!Make Ping EASY
+ip host pc 10.12.1.10
+ip host cm 10.12.100.8
+ip host cm2 10.12.100.9
+ip host p1 10.12.100.101
+ip host p2 10.12.100.102
+ip host sw 10.12.1.4
+ip host ed 10.12.12.1
+
+@CUCM
+config t
+no access-list 100
+access-list 100 permit tcp any host cm eq 80
+access-list 100 permit tcp any host cm eq 443
+access-list 100 permit tcp any host cm2 eq 22
+access-list 100 permit tcp any host cm2 eq 53
+int fa 0/0 
+ip access-group 100 in
+do sh ip access-list 100
+
+Open the list
+config t
+int fa 0/0 
+no ip access-group 101 in
+do sh ip access-list 101
+
+
+@CUCM
+config t
+no access-list 101
+access-list 101 permit tcp any host cm eq 2000
+access-list 101 permit tcp any host cm eq 23
+access-list 101 permit tcp any host cm eq 53
+access-list 101 permit tcp any host cm2 eq 80
+access-list 101 permit tcp any host cm2 eq 443
+int fa 0/0 
+no ip access-group 101 in
+do sh ip access-list 101
+
+config t
+no access-list 101
+access-list 101 permit tcp any host cm eq 2000
+access-list 101 permit tcp any host cm eq 23
+access-list 101 permit tcp any host cm eq 53
+access-list 101 permit tcp any host cm2 eq 80
+access-list 101 permit tcp any host cm2 eq 443
+int fa 0/0 
+no ip access-group 101 in
+do sh ip access-list 101
+
+config t
+no access-list 102
+access-list 102 permit tcp any host cm eq 23
+access-list 102 permit tcp any host cm eq 80
+access-list 102 permit tcp any host cm eq 53
+access-list 102 permit tcp any host cm2 eq 22
+access-list 102 permit tcp any host cm2 eq 443
+access-list 102 permit tcp any host cm2 eq 23
+access-list 102 permit tcp any host cm2 eq 2000
+int fa 0/0 
+ip access-group 102 in
+do sh ip access-list 102
+
+ipconfig t
+int fa 0/0 
+no ip access-group 102 in
+do sh ip access-list 102
+
+config t
+no access-list 104
+access-list 104 permit icmp any host cm
+access-list 104 permit tcp any host cm eq 23
+access-list 104 permit tcp any host cm eq 22
+access-list 104 permit tcp any host cm eq 443
+access-list 104 permit tcp any host cm2 eq 13
+access-list 104 permit tcp any host cm2 eq 19
+access-list 104 permit tcp any host cm2 eq 79
+access-list 104 permit tcp any host cm2 eq 53
+int fa 0/0 
+ip access-group 104 in
+do sh ip access-list 104
+
+config t
+int fa 0/0
+no ip access-group 104 in
+do sh ip access-list 104
+
+
+config t
+no access-list 105
+access-list 105 permit tcp any host cm eq 53
+access-list 105 permit tcp any host cm eq 22
+access-list 105 permit tcp any host cm eq 80
+access-list 105 permit icmp any host cm2
+access-list 105 permit tcp any host cm2 eq 23
+access-list 105 permit tcp any host cm2 eq 22
+access-list 105 permit tcp any host cm2 eq 19
+access-list 105 permit tcp any host cm2 eq 13
+int fa 0/0 
+ip access-group 105 in
+do sh ip access-list 105
+
+config t
+int fa 0/0
+no ip access-group 105 in
+do sh ip access-list 105
+
+
+Ex 6: multiple hackers, multiple victims:
+create policy
+
+p1 can sccp cm
+p2 can ping http cm
+c1 can ping cm
+c2 can http cm
+
+config t
+no access-list 106
+access-list 106 permit tcp host p1 host cm eq 2000
+access-list 106 permit icmp host p2 host cm
+access-list 106 permit tcp host p2 host cm eq 80
+access-list 106 permit icmp host c1 host cm
+access-list 106 permit tcp host c2 host cm eq 80
+int fa 0/0 
+ip access-group 106 in
+do sh ip access-list 106
+
+
+config t
+int fa 0/0
+no ip access-group 106 in
+do sh ip access-list 106
+
+
+Ex 7: multiple hackers, multiple victims: 107
+create policy
+
+p1 can ping,http cm
+p2 can sccp cm
+c1 can http cm
+c2 can ping cm
+
+config t
+no access-list 107
+access-list 107 permit icmp host p1 host cm
+access-list 107 permit tcp host p1 host cm eq 80
+access-list 107 permit tcp host p2 host cm eq 2000
+access-list 107 permit tcp host c1 host cm eq 80
+access-list 107 permit icmp host c2 host cm
+int fa 0/0 
+ip access-group 107 in
+do sh ip access-list 107
+
+config t
+int fa 0/0
+no ip access-group 107 in
+do sh ip access-list 107
+
+Ex 8: multiple hackers, multiple victims: 108
+create policy
+
+p1 can ping,http cm
+p2 can ping, http cm
+c1 can ping, https cm
+c2 can ping cm
+
+config t
+no access-list 107
+access-list 107 permit icmp host p1 host cm
+access-list 107 permit tcp host p1 host cm eq 80
+access-list 107 permit tcp host p2 host cm eq 80
+access-list 107 permit tcp host c1 host cm eq 443
+access-list 107 permit icmp host p2 host cm
+access-list 107 permit icmp host c1 host cm
+access-list 107 permit icmp host c2 host cm
+int fa 0/0 
+ip access-group 107 in
+do sh ip access-list 107
+
+config t
+int fa 0/0
+no ip access-group 107 in
+do sh ip access-list 107
+
+
+LAB 1: Configure basic ip address
+VPNJP:
+config t
+no logging console
+no ip domain-lookup
+int gi 1
+ip add 192.168.108.5 255.255.255.0
+no shut
+int gi 2
+ip add 172.16.100.5 255.255.255.0
+no shut
+int gi 3
+ip add 10.103.1.5 255.255.255.0
+no shut
+
+exam lab no.1: dualDHCPSERVER:
+@csr1000v:
+config t
+ip dhcp excluded-add 10.103.1.1 10.103.1.50
+ip dhcp excluded-add 172.16.100.1 172.16.100.80
+ip dhcp pool VM2
+network 172.16.100.0 255.255.255.0
+default-router 172.16.100.5
+domain-name vm2.com
+dns-server 1.1.1.1
+ip dhcp pool VM3
+network 10.103.1.0 255.255.255.0
+default-router 10.103.1.5
+domain-name vm3.com
+dns-server 1.1.1.1
+
+Ex2 lab no 2: SSH Configuration
+telnet is dangerous/hackable
+
+config t
+ip domain-name rivanit.com
+username admin2 privilege 15 secret password
+crypto key generate rsa
+	512->1024
+ip ssh version 2
+
+
+
+EXAMLAB 3: Network time protocol: NTP
+config t
+ip route 0.0.0.0 0.0.0.0 192.168.108.2
+ip domain-lookup
+ip name-server 8.8.8.8
+ntp server time.google.com
+do sh tp association
+
+EXAMLAB4:
+
+How to confugure Network Address Translation:
+static mapping:
+insideLocal   outsidelocal
+10.103.1.52 --> 192.168.108.88
+172.16.100.81 --> 192.168.108.69
+!
+10.103.1.51 --> default?
+172.16.100.82 --> default?
+
+@must EDIT
+config t
+access-list 8 permit 172.16.100.0 0.0.0.255
+access-list 8 permit 10.103.1.0 0.0.0.255
+Int Gi 2
+ ip nat Inside
+Int gi 3
+ ip nat Inside
+Int gi 1
+ ip nat Outside
+IP Nat inside source static 10.103.1.52 192.168.108.88
+IP Nat inside source static 172.16.100.81 192.168.108.69
+IP nat inside source list 8 int gi 1 Overload
+end
+show ip nat translation
+
+=============================================================
+
+
